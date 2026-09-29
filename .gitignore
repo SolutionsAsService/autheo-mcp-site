@@ -1,0 +1,10 @@
+node_modules/
+dist/
+test-results/
+playwright-report/
+.vercel/
+__pycache__/
+*.py[cod]
+.env
+.env.*
+!.env.example

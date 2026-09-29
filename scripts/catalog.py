@@ -1,12 +1,11 @@
 """Generate/check public tool metadata without importing or running the MCP server."""
+import argparse
 import ast
 import json
-import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
-SERVER = ROOT / "src/autheo_mcp/server.py"
-OUTPUT = ROOT / "frontend/catalog.json"
+ROOT = Path(__file__).resolve().parents[1]
+OUTPUT = ROOT / "catalog.json"
 LOCAL = {"autheo_get_server_info", "autheo_get_integration_guide", "autheo_marketplace_categories"}
 CHAIN = {"autheo_get_network_status", "autheo_get_latest_block", "autheo_get_block", "autheo_get_transaction", "autheo_get_account", "autheo_get_balance"}
 LEGACY = {"autheo_compute_search", "autheo_storage_search", "autheo_get_provider", "autheo_get_provider_reputation"}
@@ -21,9 +20,9 @@ OVERRIDES = {
     "autheo_convert_usd_to_theo": "Convert a USD amount to a display-only THEO estimate using a fresh configured price feed. No trade is executed.",
 }
 
-def catalog():
+def catalog(server):
     result = []
-    for item in ast.parse(SERVER.read_text()).body:
+    for item in ast.parse(server.read_text()).body:
         if not isinstance(item, ast.AsyncFunctionDef):
             continue
         if not any(isinstance(d, ast.Call) and isinstance(d.func, ast.Attribute) and isinstance(d.func.value, ast.Name) and d.func.value.id == "mcp" and d.func.attr == "tool" for d in item.decorator_list):
@@ -60,11 +59,18 @@ def catalog():
     return result
 
 if __name__ == "__main__":
-    data = json.dumps(catalog(), indent=2, ensure_ascii=False) + "\n"
-    if "--check" in sys.argv:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--source", type=Path, required=True, help="Path to server.py in a separate Autheo MCP checkout")
+    parser.add_argument("--check", action="store_true", help="Verify the committed catalog instead of updating it")
+    args = parser.parse_args()
+    if not args.source.is_file():
+        parser.error("--source must point to an existing Autheo MCP server.py")
+    entries = catalog(args.source)
+    data = json.dumps(entries, indent=2, ensure_ascii=False) + "\n"
+    if args.check:
         if not OUTPUT.exists() or OUTPUT.read_text() != data:
-            raise SystemExit("Tool catalog is stale. Run python3 frontend/scripts/catalog.py")
-        print(f"Catalog matches all {len(catalog())} registered tools.")
+            raise SystemExit("Tool catalog is stale. Run python3 scripts/catalog.py --source /path/to/autheo-mcp/src/autheo_mcp/server.py")
+        print(f"Catalog matches all {len(entries)} registered tools.")
     else:
         OUTPUT.write_text(data)
-        print(f"Generated {len(catalog())} tool entries.")
+        print(f"Generated {len(entries)} tool entries.")
