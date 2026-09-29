@@ -1,0 +1,591 @@
+[
+  {
+    "name": "autheo_marketplace_list_listings",
+    "category": "Marketplace",
+    "mode": "Read",
+    "description": "Browse purchasable Marketplace listings; preserves exact THEO strings and upstream page metadata.",
+    "access": "Configured Marketplace application URL. Public listing/capacity reads do not require a Clerk session.",
+    "inputs": [
+      {
+        "name": "resource_type",
+        "type": "str | None",
+        "required": false
+      },
+      {
+        "name": "region",
+        "type": "str | None",
+        "required": false
+      },
+      {
+        "name": "limit",
+        "type": "int",
+        "required": false
+      }
+    ]
+  },
+  {
+    "name": "autheo_devhub_list_deployments",
+    "category": "DevHub",
+    "mode": "Read",
+    "description": "Read deployments visible to the configured DevHub team.",
+    "access": "Configured DevHub URL and Hive identity; scoped to the configured team.",
+    "inputs": []
+  },
+  {
+    "name": "autheo_get_latest_block",
+    "category": "Blockchain",
+    "mode": "Read",
+    "description": "Get the latest Autheo blockchain block.",
+    "access": "Configured CometBFT RPC or Cosmos REST endpoint. Network status also checks DevHub health.",
+    "inputs": []
+  },
+  {
+    "name": "autheo_marketplace_estimate_listing",
+    "category": "Marketplace",
+    "mode": "Simulate",
+    "description": "Local exact-decimal estimate from current listing price; NOT an authoritative checkout quote/reservation.",
+    "access": "Configured Marketplace application URL. Public listing/capacity reads do not require a Clerk session.",
+    "inputs": [
+      {
+        "name": "listing_id",
+        "type": "str",
+        "required": true
+      },
+      {
+        "name": "quantity",
+        "type": "int",
+        "required": false
+      },
+      {
+        "name": "duration",
+        "type": "int",
+        "required": false
+      },
+      {
+        "name": "duration_unit",
+        "type": "str",
+        "required": false
+      }
+    ]
+  },
+  {
+    "name": "autheo_devhub_get_build_logs",
+    "category": "DevHub",
+    "mode": "Read",
+    "description": "Read the last 1–2000 build log lines; never executes a build.",
+    "access": "Configured DevHub URL and Hive identity; scoped to the configured team.",
+    "inputs": [
+      {
+        "name": "build_id",
+        "type": "str",
+        "required": true
+      },
+      {
+        "name": "tail",
+        "type": "int",
+        "required": false
+      }
+    ]
+  },
+  {
+    "name": "autheo_get_integration_guide",
+    "category": "Utilities",
+    "mode": "Local",
+    "description": "Local integration map and prerequisites; does not claim a live backend connection.",
+    "access": "Local metadata only. No service endpoint or credentials required.",
+    "inputs": []
+  },
+  {
+    "name": "autheo_get_server_info",
+    "category": "Utilities",
+    "mode": "Local",
+    "description": "Return information about the Autheo MCP server. This is a local MCP capability check and does not query the blockchain.",
+    "access": "Local metadata only. No service endpoint or credentials required.",
+    "inputs": []
+  },
+  {
+    "name": "autheo_get_network_status",
+    "category": "Blockchain",
+    "mode": "Read",
+    "description": "Get the current status of the Autheo network. Queries the configured CometBFT RPC endpoint and DevHub health endpoint.",
+    "access": "Configured CometBFT RPC or Cosmos REST endpoint. Network status also checks DevHub health.",
+    "inputs": []
+  },
+  {
+    "name": "autheo_get_block",
+    "category": "Blockchain",
+    "mode": "Read",
+    "description": "Retrieve an Autheo block by height.",
+    "access": "Configured CometBFT RPC or Cosmos REST endpoint. Network status also checks DevHub health.",
+    "inputs": [
+      {
+        "name": "height",
+        "type": "int",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "autheo_get_transaction",
+    "category": "Blockchain",
+    "mode": "Read",
+    "description": "Retrieve an Autheo transaction by transaction hash.",
+    "access": "Configured CometBFT RPC or Cosmos REST endpoint. Network status also checks DevHub health.",
+    "inputs": [
+      {
+        "name": "tx_hash",
+        "type": "str",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "autheo_get_account",
+    "category": "Blockchain",
+    "mode": "Read",
+    "description": "Retrieve basic information about an Autheo account.",
+    "access": "Configured CometBFT RPC or Cosmos REST endpoint. Network status also checks DevHub health.",
+    "inputs": [
+      {
+        "name": "address",
+        "type": "str",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "autheo_get_balance",
+    "category": "Blockchain",
+    "mode": "Read",
+    "description": "Retrieve the native THEO balance for an Autheo address.",
+    "access": "Configured CometBFT RPC or Cosmos REST endpoint. Network status also checks DevHub health.",
+    "inputs": [
+      {
+        "name": "address",
+        "type": "str",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "autheo_get_theo_price",
+    "category": "Utilities",
+    "mode": "Read",
+    "description": "Return display-only THEO/USD data with freshness status; not settlement authority. This tool is intentionally separated from marketplace pricing. Marketplace prices should be denominated in THEO while this oracle provides the external USD reference value.",
+    "access": "Price conversions require a fresh configured Marketplace or explicit price feed. Unavailable prices are not fabricated.",
+    "inputs": []
+  },
+  {
+    "name": "autheo_convert_theo_to_usd",
+    "category": "Utilities",
+    "mode": "Simulate",
+    "description": "Convert THEO to a display-only USD estimate using a fresh configured price feed. No trade is executed.",
+    "access": "Price conversions require a fresh configured Marketplace or explicit price feed. Unavailable prices are not fabricated.",
+    "inputs": [
+      {
+        "name": "amount_theo",
+        "type": "float",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "autheo_convert_usd_to_theo",
+    "category": "Utilities",
+    "mode": "Simulate",
+    "description": "Convert a USD amount to a display-only THEO estimate using a fresh configured price feed. No trade is executed.",
+    "access": "Price conversions require a fresh configured Marketplace or explicit price feed. Unavailable prices are not fabricated.",
+    "inputs": [
+      {
+        "name": "amount_usd",
+        "type": "float",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "autheo_marketplace_categories",
+    "category": "Marketplace",
+    "mode": "Local",
+    "description": "Return the major Autheo marketplace resource categories.",
+    "access": "Local metadata only. No service endpoint or credentials required.",
+    "inputs": []
+  },
+  {
+    "name": "autheo_compute_search",
+    "category": "DevHub",
+    "mode": "Read",
+    "description": "Search reported DevHub hardware, NOT reservable marketplace listings. Use autheo_marketplace_list_listings for purchasable inventory. Prices are expressed in THEO. USD conversion should be performed separately through the Autheo oracle.",
+    "access": "Configured DevHub URL and Hive identity; scoped to the configured team.",
+    "inputs": [
+      {
+        "name": "cpu",
+        "type": "int",
+        "required": true
+      },
+      {
+        "name": "ram_gb",
+        "type": "int",
+        "required": true
+      },
+      {
+        "name": "storage_gb",
+        "type": "int",
+        "required": false
+      },
+      {
+        "name": "gpu",
+        "type": "str | None",
+        "required": false
+      },
+      {
+        "name": "gpu_count",
+        "type": "int",
+        "required": false
+      },
+      {
+        "name": "max_price_theo_hour",
+        "type": "float | None",
+        "required": false
+      },
+      {
+        "name": "min_reputation",
+        "type": "float | None",
+        "required": false
+      }
+    ]
+  },
+  {
+    "name": "autheo_storage_search",
+    "category": "DevHub",
+    "mode": "Read",
+    "description": "Search reported DevHub storage hardware, NOT reservable marketplace listings.",
+    "access": "Configured DevHub URL and Hive identity; scoped to the configured team.",
+    "inputs": [
+      {
+        "name": "storage_gb",
+        "type": "int",
+        "required": true
+      },
+      {
+        "name": "duration_days",
+        "type": "int",
+        "required": true
+      },
+      {
+        "name": "replication_factor",
+        "type": "int",
+        "required": false
+      },
+      {
+        "name": "max_price_theo_month",
+        "type": "float | None",
+        "required": false
+      },
+      {
+        "name": "min_reputation",
+        "type": "float | None",
+        "required": false
+      }
+    ]
+  },
+  {
+    "name": "autheo_get_provider",
+    "category": "DevHub",
+    "mode": "Read",
+    "description": "Inspect a DevHub node by ID. This is not a Marketplace provider identity.",
+    "access": "Configured DevHub URL and Hive identity; scoped to the configured team.",
+    "inputs": [
+      {
+        "name": "provider_id",
+        "type": "str",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "autheo_get_provider_reputation",
+    "category": "DevHub",
+    "mode": "Read",
+    "description": "Inspect DevHub node capacity metadata. Not a verified commercial reputation score.",
+    "access": "Configured DevHub URL and Hive identity; scoped to the configured team.",
+    "inputs": [
+      {
+        "name": "provider_id",
+        "type": "str",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "autheo_get_order",
+    "category": "Marketplace",
+    "mode": "Read",
+    "description": "Retrieve an Autheo marketplace order. Reads the authenticated Marketplace order. A marketplace order is not a DevHub deployment.",
+    "access": "Configured Marketplace URL and a valid Clerk session. Upstream enforces buyer/provider role and tenant.",
+    "inputs": [
+      {
+        "name": "order_id",
+        "type": "str",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "autheo_compute_quote",
+    "category": "Utilities",
+    "mode": "Simulate",
+    "description": "Return a legacy compute simulation with unavailable pricing. No purchasable quote is available; use listing estimates instead.",
+    "access": "Legacy simulation only; returns unavailable pricing, never an authoritative checkout quote.",
+    "inputs": [
+      {
+        "name": "cpu",
+        "type": "int",
+        "required": true
+      },
+      {
+        "name": "ram_gb",
+        "type": "int",
+        "required": true
+      },
+      {
+        "name": "duration_hours",
+        "type": "float",
+        "required": true
+      },
+      {
+        "name": "storage_gb",
+        "type": "int",
+        "required": false
+      },
+      {
+        "name": "gpu",
+        "type": "str | None",
+        "required": false
+      },
+      {
+        "name": "gpu_count",
+        "type": "int",
+        "required": false
+      }
+    ]
+  },
+  {
+    "name": "autheo_storage_quote",
+    "category": "Utilities",
+    "mode": "Simulate",
+    "description": "Return a legacy storage simulation with unavailable pricing. No storage contract is created; use listing estimates instead.",
+    "access": "Legacy simulation only; returns unavailable pricing, never an authoritative checkout quote.",
+    "inputs": [
+      {
+        "name": "storage_gb",
+        "type": "int",
+        "required": true
+      },
+      {
+        "name": "duration_days",
+        "type": "int",
+        "required": true
+      },
+      {
+        "name": "replication_factor",
+        "type": "int",
+        "required": false
+      }
+    ]
+  },
+  {
+    "name": "autheo_devhub_search",
+    "category": "DevHub",
+    "mode": "Read",
+    "description": "Search deployment-backed DevHub projects and deployments (not a complete project inventory).",
+    "access": "Configured DevHub URL and Hive identity; scoped to the configured team.",
+    "inputs": [
+      {
+        "name": "query",
+        "type": "str",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "autheo_devhub_get_project",
+    "category": "DevHub",
+    "mode": "Read",
+    "description": "Inspect settings for a deployment-backed DevHub project, not a complete inventory of all projects.",
+    "access": "Configured DevHub URL and Hive identity; scoped to the configured team.",
+    "inputs": [
+      {
+        "name": "project_id",
+        "type": "str",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "autheo_devhub_get_job",
+    "category": "DevHub",
+    "mode": "Read",
+    "description": "Inspect a DevHub build by its ID. This does not schedule a job.",
+    "access": "Configured DevHub URL and Hive identity; scoped to the configured team.",
+    "inputs": [
+      {
+        "name": "job_id",
+        "type": "str",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "autheo_marketplace_get_listing",
+    "category": "Marketplace",
+    "mode": "Read",
+    "description": "Get live listing detail, constraints and canonical decimal-string price.",
+    "access": "Configured Marketplace application URL. Public listing/capacity reads do not require a Clerk session.",
+    "inputs": [
+      {
+        "name": "listing_id",
+        "type": "str",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "autheo_marketplace_get_capacity",
+    "category": "Marketplace",
+    "mode": "Read",
+    "description": "Read public capacity projection; does not expose the private mesh advertisement API.",
+    "access": "Configured Marketplace application URL. Public listing/capacity reads do not require a Clerk session.",
+    "inputs": []
+  },
+  {
+    "name": "autheo_marketplace_list_orders",
+    "category": "Marketplace",
+    "mode": "Read",
+    "description": "List orders for the configured Clerk session's buyer tenant (upstream limit 100).",
+    "access": "Configured Marketplace URL and a valid Clerk session. Upstream enforces buyer/provider role and tenant.",
+    "inputs": []
+  },
+  {
+    "name": "autheo_marketplace_get_placement_policy",
+    "category": "Marketplace",
+    "mode": "Read",
+    "description": "Read an order's placement constraints; never schedule or mutate the policy.",
+    "access": "Configured Marketplace URL and a valid Clerk session. Upstream enforces buyer/provider role and tenant.",
+    "inputs": [
+      {
+        "name": "order_id",
+        "type": "str",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "autheo_marketplace_get_settlement_status",
+    "category": "Marketplace",
+    "mode": "Read",
+    "description": "Read recorded settlement status. Does NOT verify payments or trigger allocation.",
+    "access": "Configured Marketplace URL and a valid Clerk session. Upstream enforces buyer/provider role and tenant.",
+    "inputs": [
+      {
+        "name": "order_id",
+        "type": "str",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "autheo_marketplace_provider_view",
+    "category": "Marketplace",
+    "mode": "Read",
+    "description": "Read own provider profile, listings, node_bindings, orders, or infrastructure_rewards; Clerk role/tenant enforced upstream.",
+    "access": "Configured Marketplace URL and a valid Clerk session. Upstream enforces buyer/provider role and tenant.",
+    "inputs": [
+      {
+        "name": "view",
+        "type": "str",
+        "required": false
+      }
+    ]
+  },
+  {
+    "name": "autheo_marketplace_list_l0_deployments",
+    "category": "Marketplace",
+    "mode": "Read",
+    "description": "Private HMAC/mTLS service read of short-lived L0 advertisements. Not public listing inventory.",
+    "access": "Private bridge URL and HMAC credentials; optional private CA and mTLS client certificates. Not public inventory.",
+    "inputs": []
+  },
+  {
+    "name": "autheo_devhub_list_nodes",
+    "category": "DevHub",
+    "mode": "Read",
+    "description": "Read and normalize DevHub nodes; hardware totals do not imply available marketplace capacity.",
+    "access": "Configured DevHub URL and Hive identity; scoped to the configured team.",
+    "inputs": []
+  },
+  {
+    "name": "autheo_devhub_get_deployment",
+    "category": "DevHub",
+    "mode": "Read",
+    "description": "Find a deployment in the team-scoped /deployments response.",
+    "access": "Configured DevHub URL and Hive identity; scoped to the configured team.",
+    "inputs": [
+      {
+        "name": "deployment_id",
+        "type": "str",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "autheo_devhub_list_projects",
+    "category": "DevHub",
+    "mode": "Read",
+    "description": "List project names derived from visible deployments; undeployed projects are not included.",
+    "access": "Configured DevHub URL and Hive identity; scoped to the configured team.",
+    "inputs": []
+  },
+  {
+    "name": "autheo_devhub_get_build",
+    "category": "DevHub",
+    "mode": "Read",
+    "description": "Read DevHub build state and evidence from the real /v1/builds/{id} route.",
+    "access": "Configured DevHub URL and Hive identity; scoped to the configured team.",
+    "inputs": [
+      {
+        "name": "build_id",
+        "type": "str",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "autheo_devhub_get_deployment_resources",
+    "category": "DevHub",
+    "mode": "Read",
+    "description": "Read actual deployment resources from DevHub.",
+    "access": "Configured DevHub URL and Hive identity; scoped to the configured team.",
+    "inputs": [
+      {
+        "name": "deployment_id",
+        "type": "str",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "autheo_devhub_status",
+    "category": "DevHub",
+    "mode": "Read",
+    "description": "Read overview, cluster, mesh, security, or wallet metadata; process liveness is not mesh health.",
+    "access": "Configured DevHub URL and Hive identity; scoped to the configured team.",
+    "inputs": [
+      {
+        "name": "view",
+        "type": "str",
+        "required": false
+      }
+    ]
+  }
+]

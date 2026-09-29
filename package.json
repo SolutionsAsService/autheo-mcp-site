@@ -1,0 +1,21 @@
+{
+  "name": "autheo-mcp-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "python3 -m http.server 4173 --bind 127.0.0.1",
+    "build": "node scripts/build.mjs",
+    "test": "node --test tests/content.test.mjs",
+    "test:e2e": "playwright test",
+    "format:check": "prettier --check index.html style.css app.js content.js package.json playwright.config.js scripts/build.mjs tests/*.mjs tests/*.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.63.0",
+    "prettier": "3.6.2"
+  }
+}
